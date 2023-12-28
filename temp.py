@@ -3,6 +3,7 @@
 import discord
 from dotenv import load_dotenv
 import os
+from functions.get_openai_chat import get_openai_chat
 
 load_dotenv()
 # print(os.getenv('bot_private_token'))
@@ -22,7 +23,10 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
+    if message.content.startswith('Hey Fuckbot'):
+        clean_content = message.content.replace("Fuckbot", "Fbot")
+        fbot_response = get_openai_chat(clean_content).content
+
+        await message.channel.send(fbot_response)
 
 client.run(os.getenv('bot_private_token'))
