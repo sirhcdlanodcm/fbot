@@ -19,8 +19,8 @@ client = OpenAI(api_key=api_key)
 # Step 1: Create an Assistant
 my_assistant = client.beta.assistants.create(
     model="gpt-4-1106-preview",
-    instructions="You are a personal math tutor. When asked a question, write and run Python code to answer the question.",
-    name="Math Tutor",
+    instructions="You are FBot, an assistant to a Madden League. You live in a Discord channel, and your response length should make sense for that context.",
+    name="FBot",
     tools=[{"type": "code_interpreter"}, {"type": "retrieval"}],
 )
 print(f"This is the assistant object: {my_assistant} \n")
