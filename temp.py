@@ -25,7 +25,9 @@ async def on_message(message):
 
     if message.content.startswith('Hey Fuckbot'):
         clean_content = message.content.replace("Fuckbot", "Fbot")
-        fbot_response = get_openai_chat(clean_content).content
+        print("message.author = " + str(message.author))
+            
+        fbot_response = get_openai_chat(clean_content, str(message.author)).content
 
         await message.channel.send(fbot_response)
 
