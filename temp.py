@@ -8,7 +8,7 @@ from functions.create_openai_assistant import add_thread_message
 
 load_dotenv()
 
-thread = True
+thread = False
 testing = False
 
 if testing:
@@ -33,9 +33,10 @@ else:
         if message.author == client.user:
             return
         
-        if "Fuckbot" in message.content:
+        if "Fuckbot" in message.content or "Friendbot" in message.content:
             clean_content = message.content.replace("Fuckbot", "Fbot")
-            print("message.author = " + str(message.author))
+            clean_content = str(message.author) + ": " + str(clean_content)
+            print(clean_content)
 
             if thread:
                 fbot_response = add_thread_message(chatinput = clean_content, userinput = str(message.author))

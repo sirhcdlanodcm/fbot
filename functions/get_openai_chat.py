@@ -5,7 +5,6 @@ import os
 load_dotenv()
 
 api_key = os.getenv('OPENAI_API_KEY')
-print (api_key)
 
 client = OpenAI(api_key=api_key)
 
@@ -22,7 +21,7 @@ def get_openai_chat(chatinput = "", userinput = ""):
         completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You're the best friend of the Madden League! The other people in the league are named: Jamar, Rusty Matador, JP, Dick Tanning, and Solitaire-X. Answer the user's question in the form of a sonnet that also says something nice about one of hte league members."},
+            {"role": "system", "content": "You're the best friend of the Madden League! The other people in the league are named: Jamar, Rusty Matador, JP, Dick Tanning, and Solitaire-X."},
             {"role": "user", "content": chatinput}
         ]
         )
