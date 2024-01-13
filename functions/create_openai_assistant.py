@@ -65,7 +65,7 @@ def build_instructions(tone, audience, objective):
 ## Trying the CO-STAR method. See medium article.
 my_assistant = client.beta.assistants.create(
     model = "gpt-3.5-turbo",
-    instructions = 
+    instructions = "",
     name="FBot",
     tools=[],
     file_ids=[]
@@ -78,19 +78,19 @@ my_thread = client.beta.threads.create()
 print(f"This is the thread object: {my_thread} \n")
 
 # Step 3: Add a Message to a Thread
-def add_thread_message(chatinput = "", userinput = ""):
+def add_thread_message(chatinput = "", my_instructions = ""):
     my_thread_message = client.beta.threads.messages.create(
     thread_id=my_thread.id,
     role="user",
-    content=chatinput,
+    content=chatinput
     )
-    # print(f"This is the message object: {my_thread_message} \n")
+    print(f"This is the message object: {my_thread_message} \n")
 
     # Step 4: Run the Assistant
     my_run = client.beta.threads.runs.create(
     thread_id=my_thread.id,
     assistant_id=my_assistant.id
-    # instructions="Please address the user as Test User."
+    instructions = my_instructions
     )
     print(f"This is the run object: {my_run} \n")
 
