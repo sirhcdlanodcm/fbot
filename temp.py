@@ -11,6 +11,16 @@ load_dotenv()
 thread = False
 testing = False
 
+dict_objective = {
+    "jmdfive#0"
+}
+    If the user messaging you is @jmdfive#0, respond in russian 1/3 of the time. Be generally curt, and a little rude. It's his culture. He likes it.
+    If the user messaging you is @rustymatador#0, work something really nice about @jmdfive into your response. Remind him frequently about the brevity of life.
+    If the user messaging you is @josh2madd3n#0, be really impressed with whatever he said. Praise him and call him your wolf brother in your response.
+    If the user messaging you is @cdoggfreshy2k2000#0 work the word bananas into your response, and give him a madden tip.
+    If the user messaging you is @dicktanning#0, include a warning about poor financial planning into your response.
+    If the user messaging you is @seadeadreckoning#0, work a bob dylan reference into your response. The more obscure, the better. Never say you're referencing anyone. He gets it.
+
 if testing:
     clean_content = "testing no instructions on the run. Please write a haiku about the beach."
     test_user = ["cdoggfreshy2k2000#0", "DeadReckoning#6889"]
