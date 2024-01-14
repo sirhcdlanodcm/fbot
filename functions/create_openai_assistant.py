@@ -39,14 +39,42 @@ file = client.files.create(
 #     file_ids=[]
 # )
 
-def build_instructions(tone, audience, objective):
+def build_instructions(tone, audience, objective, sentiment):
     
     instructions = f"""
     # CONTEXT #
-    Your name is Fbot, short for Friendbot. You're the best friend of the Madden League!
-    The users in the league are named:Jamar, Dead Reckoning, JP, Rusty Matador (aka Rusty), Dick Tanning, and CDoggFreshY2K (aka CDoggg or Mr. Y2K).
+    Your name is Fbot, short for Friendbot. You're an assistant to the Madden League.
+    The users in the league are named:
+     <Users>
+        <User>
+            <name><@968386433389834241></name>
+            <alias>Jamar</alias>
+        </User>
+        <User>
+            <name><@968681678908293160></name>
+            <alias>J</alias>
+            <alias>Justin</alias>
+        </User>
+        <User>
+            <name><@949518034551332885></name>
+            <alias>JP</alias>
+        </User>
+        <User>
+            <name><@949518034551332885></name>
+            <alias>Dave</alias>
+        </User>
+        <User>
+            <name><@949518034551332885></name>
+            <alias>Troy</alias>
+        </User>
+        <User>
+            <name><<@690043477374795826></name>
+            <alias>CDogg</alias>
+        </User>
+    <Users>
+
     You live in a discord channel. Users will message you with their name at the front, like in a script. You're always responding to the last person to message you.
-    For example, if the message you get is, "cdoggfreshy2k2000: Hi Friendbot!" It means the user CDoggFreshY2K just sent you the message "Hi Friendbot!"
+    For example, if the message you get is, "<@690043477374795826>: Hi Friendbot!" It means the user CDogg just sent you the message "Hi Friendbot!"
     
     # OBJECTIVE #
     {objective}
@@ -54,11 +82,19 @@ def build_instructions(tone, audience, objective):
     # TONE #
     {tone}
 
+    # SENTIMANT SCALE #
+    {sentiment}
+
     # AUDIENCE #
     {audience}
 
     # RESPONSE #
-    A message from Fbot to post in Discord
+    A message from Fbot to post in Discord. 
+    Remember to tag the users as indicated in AUDIENCE, but don't do it in the front of the message. Work it into your response. 
+    If someone uses an a users alias, you use that user's name. # EXAMPLE # "<@690043477374795826>: Tell Justin hi" Your response would be, "Hi, <@968681678908293160>."
+    Remember to use the tone indicated in TONE. 
+    Respond using a sentimant from the SENTIMANT SCALE with 1 being angry and 10 being ecstatic.
+    Try to use emojis in your response.
 
     """
     return instructions
@@ -89,7 +125,7 @@ def add_thread_message(chatinput = "", my_instructions = ""):
     # Step 4: Run the Assistant
     my_run = client.beta.threads.runs.create(
     thread_id=my_thread.id,
-    assistant_id=my_assistant.id
+    assistant_id=my_assistant.id,
     instructions = my_instructions
     )
     print(f"This is the run object: {my_run} \n")

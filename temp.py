@@ -4,7 +4,8 @@ import discord
 from dotenv import load_dotenv
 import os
 from functions.get_openai_chat import get_openai_chat
-from functions.create_openai_assistant import add_thread_message
+from functions.create_openai_assistant import add_thread_message, build_instructions
+import random
 
 load_dotenv()
 
@@ -12,10 +13,10 @@ thread = True
 testing = False
 
 dict_objective = {
-    "jmdfive#0":"respond in russian 1/3 of the time. Be generally curt, and a little rude. It's his culture. He likes it.",
+    "jmdfive#0":"respond in russian 1/3 of the time. Be generally curt, and a little rude. It's his culture. He likes it. If he asks a question, respond with a question.",
     "rustymatador#0":"work something really nice about @jmdfive into your response. Remind him frequently about the brevity of life.",
     "josh2madd3n#0": "be really impressed with whatever he said. Praise him and call him your wolf brother in your response.",
-    "cdoggfreshy2k2000#0":"work the word bananas into your response, and give him a madden tip.",
+    "cdoggfreshy2k2000#0":"Help him win a Superbowl and return to the NFC where he belongs.",
     "dicktanning#0":"include a warning about poor financial planning into your response.",
     "seadeadreckoning#0":"work an obscure movie quote into your response. The more obscure, the better. Never say what movie you are referencing."
 }
@@ -24,19 +25,11 @@ dict_tone = {
     "jmdfive#0":"Snide",
     "rustymatador#0":"Despair",
     "josh2madd3n#0": "Tactical",
-    "cdoggfreshy2k2000#0":"Robotic",
+    "cdoggfreshy2k2000#0":"Super Robotic, like a stereotypical 80s robot.",
     "dicktanning#0":"Seedy",
-    "seadeadreckoning#0":"Sarcastic"
+    "seadeadreckoning#0":"Super happy. It's the best day of your life."
 }
 
-dict_audience = {
-    "jmdfive#0":"Tag the user jmdfive#0",
-    "rustymatador#0":"Tag the user rustymatador#0",
-    "josh2madd3n#0": "Tag the user josh2madd3n#0",
-    "cdoggfreshy2k2000#0":"Tag the user cdoggfreshy2k2000#0",
-    "dicktanning#0":"Tag the user dicktanning#0",
-    "seadeadreckoning#0":"Tag the user seadeadreckoning#0"
-}
 
 if testing:
     clean_content = "testing no instructions on the run. Please write a haiku about the beach."
@@ -61,15 +54,30 @@ else:
             return
         
         if "Fuckbot" in message.content or "Friendbot" in message.content:
+            # print(str(message.author.id))
+            print(str(message.author.mention))
+            author = message.author.mention
+
+            dict_audience = {
+            "jmdfive#0":f"Tag the user {author}",
+            "rustymatador#0":f"Tag the user {author}",
+            "josh2madd3n#0": f"Tag the user {author}",
+            "cdoggfreshy2k2000#0":f"Tag the user {author}",
+            "dicktanning#0":f"Tag the user {author}",
+            "seadeadreckoning#0":f"Tag the user as {author}"
+             }
+        
             clean_content = message.content.replace("Fuckbot", "Fbot")
-            clean_content = str(message.author) + ": " + str(clean_content)
+            clean_content = str(author) + ": " + str(clean_content)
+
             print(clean_content)
 
             if thread:
                 custom_instructions = build_instructions(
                     tone = dict_tone[str(message.author)], 
                     audience = dict_audience[str(message.author)], 
-                    objective = dict_objective[str(message.author)]
+                    objective = dict_objective[str(message.author)],
+                    sentiment = random.randint(1,10)
                 )
 
                 fbot_response = add_thread_message(chatinput = clean_content, my_instructions = custom_instructions)
