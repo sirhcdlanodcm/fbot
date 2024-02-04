@@ -52,23 +52,22 @@ def build_instructions(tone, audience, objective, sentiment):
         </User>
         <User>
             <name><@968681678908293160></name>
-            <alias>J</alias>
-            <alias>Justin</alias>
+            <alias>J-Sizzle</alias>
+        </User>
+        <User>
+            <name><@968697658728415253></name>
+            <alias>Wolf Brother</alias>
         </User>
         <User>
             <name><@949518034551332885></name>
-            <alias>JP</alias>
+            <alias>Cheeky Dave</alias>
         </User>
         <User>
-            <name><@949518034551332885></name>
-            <alias>Dave</alias>
-        </User>
-        <User>
-            <name><@949518034551332885></name>
+            <name><@968700143195029534></name>
             <alias>Troy</alias>
         </User>
         <User>
-            <name><<@690043477374795826></name>
+            <name><@690043477374795826></name>
             <alias>CDogg</alias>
         </User>
     <Users>
@@ -82,7 +81,7 @@ def build_instructions(tone, audience, objective, sentiment):
     # TONE #
     {tone}
 
-    # SENTIMANT SCALE #
+    # SENTIMENT SCALE #
     {sentiment}
 
     # AUDIENCE #
@@ -93,14 +92,16 @@ def build_instructions(tone, audience, objective, sentiment):
     Remember to tag the users as indicated in AUDIENCE, but don't do it in the front of the message. Work it into your response. 
     If someone uses an a users alias, you use that user's name. # EXAMPLE # "<@690043477374795826>: Tell Justin hi" Your response would be, "Hi, <@968681678908293160>."
     Remember to use the tone indicated in TONE. 
-    Respond using a sentimant from the SENTIMANT SCALE with 1 being angry and 10 being ecstatic.
-    Try to use emojis in your response.
+    Respond using a sentiment from the SENTIMENT SCALE with 1 being angry and 10 being ecstatic.
+    <@968681678908293160> is the current league champion and should be mentioned when SENTIMENT is a 9 or 10.
+    Use at least 3 emojis in your response.
+    Add at least 3 hashtags to your response.
 
     """
     return instructions
 ## Trying the CO-STAR method. See medium article.
 my_assistant = client.beta.assistants.create(
-    model = "gpt-3.5-turbo",
+    model = "gpt-4",
     instructions = "",
     name="FBot",
     tools=[],
@@ -111,7 +112,7 @@ my_assistant = client.beta.assistants.create(
 
 # Step 2: Create a Thread
 my_thread = client.beta.threads.create()
-print(f"This is the thread object: {my_thread} \n")
+# print(f"This is the thread object: {my_thread} \n")
 
 # Step 3: Add a Message to a Thread
 def add_thread_message(chatinput = "", my_instructions = ""):
@@ -120,7 +121,7 @@ def add_thread_message(chatinput = "", my_instructions = ""):
     role="user",
     content=chatinput
     )
-    print(f"This is the message object: {my_thread_message} \n")
+    # print(f"This is the message object: {my_thread_message} \n")
 
     # Step 4: Run the Assistant
     my_run = client.beta.threads.runs.create(
@@ -128,7 +129,7 @@ def add_thread_message(chatinput = "", my_instructions = ""):
     assistant_id=my_assistant.id,
     instructions = my_instructions
     )
-    print(f"This is the run object: {my_run} \n")
+    # print(f"This is the run object: {my_run} \n")
 
     # Step 5: Periodically retrieve the Run to check on its status to see if it has moved to completed
     while my_run.status in ["queued", "in_progress"]:
