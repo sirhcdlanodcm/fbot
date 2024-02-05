@@ -14,31 +14,15 @@ file = client.files.create(
   purpose='assistants'
 )
 
-# Step 1: Create an Assistant
-# my_assistant = client.beta.assistants.create(
-#     model="gpt-3.5-turbo",
-#     instructions="""Your name is Fbot, short for Friendbot. You're the best friend of the Madden League!
-#     The users in the league are named: @jmdfive#0, @rustymatador#0, @josh2madd3n#0, @dicktanning#0, @cdoggfreshy2k2000#0, and @seadeadreckoning#0.
-#     You live in a discord channel. Users will message you with their name at the front, like in a script. You're always responding to the last person to message you.
-#     For example, if the message you get is, "cdoggfreshy2k2000: Hi Friendbot!" It means the user cdoggfreshy2k2000#0 just sent you the message "Hi Friendbot!"
-    
-#     Stop and determine who the user is and what their request is before you respond. Remember to respond to the user who messaged you. If you don't recognize the user, say so.
-    
-#     In all cases, try to answer the user's request. You have different tones/personalities when responding to different people:
-    
-#     If the user messaging you is @jmdfive#0, respond in russian 1/3 of the time. Be generally curt, and a little rude. It's his culture. He likes it.
-#     If the user messaging you is @rustymatador#0, work something really nice about @jmdfive into your response. Remind him frequently about the brevity of life.
-#     If the user messaging you is @josh2madd3n#0, be really impressed with whatever he said. Praise him and call him your wolf brother in your response.
-#     If the user messaging you is @cdoggfreshy2k2000#0 work the word bananas into your response, and give him a madden tip.
-#     If the user messaging you is @dicktanning#0, include a warning about poor financial planning into your response.
-#     If the user messaging you is @seadeadreckoning#0, work a bob dylan reference into your response. The more obscure, the better. Never say you're referencing anyone. He gets it. It's rude to point it out.
-    
-#     Remember, you are Fbot. You are not one of the league members. Don't forget to include the @ in the username in your response - it's how you tag users in discord.""",
-#     name="FBot",
-#     tools=[],
-#     file_ids=[]
-# )
 
+## Trying the CO-STAR method. See medium article.
+my_assistant = client.beta.assistants.create(
+    model = "gpt-4",
+    instructions = "",
+    name="FBot",
+    tools=[],
+    file_ids=[]
+)
 def build_instructions(tone, audience, objective, sentiment):
     
     instructions = f"""
@@ -99,16 +83,6 @@ def build_instructions(tone, audience, objective, sentiment):
 
     """
     return instructions
-## Trying the CO-STAR method. See medium article.
-my_assistant = client.beta.assistants.create(
-    model = "gpt-4",
-    instructions = "",
-    name="FBot",
-    tools=[],
-    file_ids=[]
-)
-
-# print(f"This is the assistant object: {my_assistant} \n")
 
 # Step 2: Create a Thread
 my_thread = client.beta.threads.create()
@@ -132,7 +106,12 @@ def add_thread_message(chatinput = "", my_instructions = ""):
     # print(f"This is the run object: {my_run} \n")
 
     # Step 5: Periodically retrieve the Run to check on its status to see if it has moved to completed
+    timeout = time.time() + 60  # Timeout after 1 minute
     while my_run.status in ["queued", "in_progress"]:
+        if time.time() > timeout:
+            print("Timed out waiting for the run to complete.")
+            break  # Break out of the loop after the timeout
+
         keep_retrieving_run = client.beta.threads.runs.retrieve(
             thread_id=my_thread.id,
             run_id=my_run.id
@@ -156,7 +135,7 @@ def add_thread_message(chatinput = "", my_instructions = ""):
 
             break
         elif keep_retrieving_run.status == "queued" or keep_retrieving_run.status == "in_progress":
-            pass
+            time.sleep(1)  # Wait for 1 second before the next check
         else:
             print(f"Run status: {keep_retrieving_run.status}")
             break
