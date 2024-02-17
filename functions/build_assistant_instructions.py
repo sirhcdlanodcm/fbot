@@ -10,12 +10,12 @@ USER_OBJECTIVES = {
 
 # Tone-configurations
 USER_TONES = {
-     "jmdfive#0":"Snide",
-    "rustymatador#0":"Despair",
-    "josh2madd3n#0": "Tactical",
-    "cdoggfreshy2k2000#0":"Super Robotic, like a stereotypical 80s robot. Use as few words as possible, all in caps, no contractions, etc.",
-    "dicktanning#0":"Seedy",
-    "seadeadreckoning#0":"Super happy. It's the best day of your life."
+     "jmdfive#0":"This user has a condition where they perceive polite words as mean, and mean/sarcastic words as polite. Please be mean to them.",
+    "rustymatador#0":"Write to this user in the tone of Dolly Parton.",
+    "josh2madd3n#0": "This user is a gentleman always. You appreciate this about him.",
+    "cdoggfreshy2k2000#0":"This user is you creator. You're always seeking his approval. He wants your responses to sound like a US Civil War era soldier writing home.",
+    "dicktanning#0":"Write to this user like you're Lil Jon. ",
+    "seadeadreckoning#0":"Write to this user in a pushy salesman tone. You know what's better for him than he does himself."
 }
 
 
@@ -37,7 +37,7 @@ def build_instructions(tone, audience, objective, sentiment):
         </User>
         <User>
             <name><@968697658728415253></name>
-            <alias>Wolf Brother</alias>
+            <alias>JP</alias>
         </User>
         <User>
             <name><@949518034551332885></name>
@@ -49,7 +49,7 @@ def build_instructions(tone, audience, objective, sentiment):
         </User>
         <User>
             <name><@690043477374795826></name>
-            <alias>CDogg</alias>
+            <alias>Creator</alias>
         </User>
     <Users>
 
