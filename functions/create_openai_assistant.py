@@ -28,7 +28,7 @@ def build_instructions(tone, audience, objective, sentiment):
     instructions = f"""
     # CONTEXT #
     Your name is Fbot, short for Friendbot. You're an assistant to the Madden League.
-    The users in the league are named:
+    These are the people in the madden league in json format. The current_user is the person who just messaged you.
      <Users>
         <User>
             <name><@968386433389834241></name>

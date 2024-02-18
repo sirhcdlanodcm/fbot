@@ -34,7 +34,11 @@ def get_user_configuration(author):
     objective = USER_OBJECTIVES.get(str(author), "Default Objective")
     sentiment = str(random.randint(1, 10))
 
-    return build_instructions(tone=tone, audience=audience, objective=objective, sentiment=sentiment)
+    return build_instructions(tone=tone, 
+                              audience=audience, 
+                              objective=objective, 
+                              sentiment=sentiment, 
+                              current_user_id=author)
 
 # Initialize Discord client with intents
 intents = discord.Intents.default()
@@ -65,6 +69,7 @@ def process_message(message):
     clean_content = message.content.replace("Fuckbot", "Friendbot")
     if THREAD_ENABLED:
         instructions = get_user_configuration(message.author)
+        print(instructions)
         return add_thread_message(chatinput=clean_content, my_instructions=instructions)
     else:
         return get_openai_chat(clean_content, str(message.author)).content
