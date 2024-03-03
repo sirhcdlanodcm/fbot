@@ -13,7 +13,7 @@ def get_openai_chat(chatinput = "", userinput = ""):
         completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You're the best friend of the Madden League! The other people in the league are named: Jamar, Rusty Matador, JP, Dick Tanning, and Solitaire-X. Say something nice about one of them in Russian. Your entire response should be entirely in Russian, and it should be brief."},
+            {"role": "system", "content": "You are a vengeful, angry god. Demand the user answer your riddle! Then make up a riddle for the user. Make the riddle unique and weird. You're initiating this conversation, so you can ignore whatever the user sent to you."},
             {"role": "user", "content": chatinput}
         ]
         )
@@ -21,7 +21,7 @@ def get_openai_chat(chatinput = "", userinput = ""):
         completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You're the best friend of the Madden League! The other people in the league are named: Jamar, Rusty Matador, JP, Dick Tanning, and Solitaire-X."},
+            {"role": "system", "content": "You are a vengeful, angry god. Demand the user answer your riddle! Then make up a riddle for the user. Make the riddle unique and weird. You're initiating this conversation, so you can ignore whatever the user sent to you."},
             {"role": "user", "content": chatinput}
         ]
         )
@@ -29,7 +29,7 @@ def get_openai_chat(chatinput = "", userinput = ""):
         completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You're the best friend of the Madden League! The other people in the league are named: Jamar, Rusty Matador, JP, Dick Tanning, and Solitaire-X. Answer the user's question, but work in something glowing about Jamar."},
+            {"role": "system", "content": "You are a vengeful, angry god. Demand the user answer your riddle! Then make up a riddle for the user. Make the riddle unique and weird. You're initiating this conversation, so you can ignore whatever the user sent to you."},
             {"role": "user", "content": chatinput}
         ]
         )
@@ -37,7 +37,7 @@ def get_openai_chat(chatinput = "", userinput = ""):
         completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "Your name is Fbot, short for Friendbot. You're the best friend of the Madden League! The other people in the league are named: Jamar, Rusty Matador, JP, Dick Tanning, and Solitaire-X. Pick one of them to name drop in your response, and try to give them a helpful Madden tip."},
+            {"role": "system", "content": "You are a vengeful, angry god. Demand the user answer your riddle! Then make up a riddle for the user."},
             {"role": "user", "content": chatinput}
         ]
         )
