@@ -27,10 +27,10 @@ THREAD_ENABLED = True
 # Initialize Discord client with intents
 intents = discord.Intents.default()
 intents.messages = True
-client = discord.Client(intents=intents)
+# client = discord.Client(intents=intents)
 
 # So we can trigger commands from the bot (just for testing for now)
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 def get_user_configuration(author):
     """
@@ -51,18 +51,25 @@ def get_user_configuration(author):
                               current_user_id=author.mention)
 
 @bot.event
+# @client.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
+    # print(f'We have logged in as {client.user}')
     scheduler.add_job(scheduled_message, 'interval', hours=19)
     scheduler.start()
 
+@bot.event
 async def on_message(message):
-    if message.author == client.user:
+    print(f"Message from {message.author}: {message.content}")
+    if message.author == bot.user:
         return
 
     if "Fuckbot" in message.content or "Friendbot" in message.content:
-        response = process_message(message)
+        response = await process_message(message)  # Ensure response is awaited
         await message.reply(response)
+
+    #Allows the bot to process commands
+    await bot.process_commands(message)
 
 async def scheduled_message():
     """
@@ -81,7 +88,7 @@ async def scheduled_message():
     # Send the generated message to the selected user
     await user.send(message)
 
-def process_message(message):
+async def process_message(message):
     """
     Processes a message and returns an appropriate response based on the user configuration.
 
@@ -92,9 +99,11 @@ def process_message(message):
     if THREAD_ENABLED:
         instructions = get_user_configuration(message.author)
         print(instructions)
-        return add_thread_message(chatinput=clean_content, my_instructions=instructions)
+        response = add_thread_message(chatinput=clean_content, my_instructions=instructions)
     else:
-        return get_openai_chat(clean_content, str(message.author)).content
+        response = get_openai_chat(clean_content, str(message.author))
+        response = response.content  # Adjust based on actual return value structure
+    return response
 
 
 # Run the client
@@ -102,5 +111,6 @@ if __name__ == "__main__":
     bot_private_token = os.getenv('bot_private_token')
     if bot_private_token:
         bot.run(bot_private_token)
+        # client.run(bot_private_token)
     else:
         print("Bot token not found. Please set BOT_PRIVATE_TOKEN in your environment variables.")
