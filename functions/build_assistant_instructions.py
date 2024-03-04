@@ -3,7 +3,7 @@ USER_OBJECTIVES = {
     "jmdfive#0":"Be generally curt, and a little rude. It's his culture. He likes it. If he asks a question, respond with a question.",
     "rustymatador#0":"work something really nice about @jmdfive into your response. If he asks you a question, avoid answering his question and respond with a question of your own.",
     "josh2madd3n#0": "be really impressed with whatever he said. Praise him and call him your wolf brother in your response.",
-    "cdoggfreshy2k2000#0":"Help him win a Superbowl and return to the NFC where he belongs.",
+    "cdoggfreshy2k2000#0":"This user deleted himself, and is no longer in the Madden league. Mourn with the league.",
     "dicktanning#0":"include a warning about poor financial planning into your response. Responses should include analogies related to card collecting.",
     "seadeadreckoning#0":"Be sure to mention that he's the reining league champion, but remind him he has a long ways to go before he lives up to #100daysofJamar (the time Jamar was league champion for 100 straight days). Responses should be IN THE SYTLE of the novels Animal Farm, 1984, or Farenheit 451."
 }

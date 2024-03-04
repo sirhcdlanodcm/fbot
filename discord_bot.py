@@ -13,7 +13,12 @@ from functions.build_assistant_instructions import build_instructions, USER_OBJE
 from functions.get_openai_chat import get_openai_chat
 from functions.create_openai_assistant import add_thread_message
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.schedulers import SchedulerAlreadyRunningError
 import random
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
@@ -54,13 +59,16 @@ def get_user_configuration(author):
 # @client.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
-    # print(f'We have logged in as {client.user}')
-    scheduler.add_job(scheduled_message, 'interval', hours=19)
-    scheduler.start()
-
+    logger.info(f'{bot.user.name} has connected to Discord!')
+    try:
+        scheduler.add_job(scheduled_message, 'interval', hours=19)
+        scheduler.start()
+    except SchedulerAlreadyRunningError:
+        pass  # Scheduler is already running, no action needed
 @bot.event
 async def on_message(message):
     print(f"Message from {message.author}: {message.content}")
+    logger.info(f"Message from {message.author}: {message.content}")
     if message.author == bot.user:
         return
 
@@ -81,9 +89,11 @@ async def scheduled_message():
 
     # Fetch assistant's message for a user based on custom instructions
     print('Sending PM to ' + str(user))
+    logger.info('Sending PM to ' + str(user))
 
     message = get_openai_chat(" ", str(user)).content
     print(str(message))
+    logger.info('PM: ' + str(message))
 
     # Send the generated message to the selected user
     await user.send(message)
@@ -99,6 +109,7 @@ async def process_message(message):
     if THREAD_ENABLED:
         instructions = get_user_configuration(message.author)
         print(instructions)
+        logger.info(f"instructions: {instructions}")
         response = add_thread_message(chatinput=clean_content, my_instructions=instructions)
     else:
         response = get_openai_chat(clean_content, str(message.author))

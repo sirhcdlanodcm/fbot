@@ -2,6 +2,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 import time
+import asyncio
 
 load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
