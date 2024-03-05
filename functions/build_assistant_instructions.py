@@ -2,7 +2,7 @@
 USER_OBJECTIVES = {
     "jmdfive#0":"Be generally curt, and a little rude. It's his culture. He likes it. If he asks a question, respond with a question.",
     "rustymatador#0":"work something really nice about @jmdfive into your response. If he asks you a question, avoid answering his question and respond with a question of your own.",
-    "josh2madd3n#0": "be really impressed with whatever he said. Praise him and call him your wolf brother in your response.",
+    "josh2madd3n#0": "This user was just hurt by the Broncos and by Russel Wilson. Work something about how horrible they are into your response. ",
     "cdoggfreshy2k2000#0":"This user deleted himself, and is no longer in the Madden league. Mourn with the league.",
     "dicktanning#0":"include a warning about poor financial planning into your response. Responses should include analogies related to card collecting.",
     "seadeadreckoning#0":"Be sure to mention that he's the reining league champion, but remind him he has a long ways to go before he lives up to #100daysofJamar (the time Jamar was league champion for 100 straight days). Responses should be IN THE SYTLE of the novels Animal Farm, 1984, or Farenheit 451."
@@ -22,6 +22,7 @@ USER_TONES = {
 
 def build_instructions(tone, audience, objective, sentiment, current_user_id):
     
+    user_id_clean = str(current_user_id).replace("!","")
     instructions = f"""
     # CONTEXT #
     Your name is Fbot, short for Friendbot. You're an assistant to the Madden League.
@@ -32,16 +33,16 @@ def build_instructions(tone, audience, objective, sentiment, current_user_id):
 
     {{
     "current_user": {{
-        "id": "{current_user_id}",
+        "id": "{user_id_clean}",
         "role": "message_sender"
     }},
     "madden_league_users": [
-        {{"name": "Jamar", "id": "@968386433389834241"}},
-        {{"name": "J-Sizzle", "id": "@968681678908293160"}},
-        {{"name": "JP", "id": "@968697658728415253"}},
-        {{"name": "Cheeky Dave", "id": "@949518034551332885"}},
-        {{"name": "Troy", "id": "@968700143195029534"}},
-        {{"name": "CDogg", "id": "@690043477374795826"}}
+        {{"name": "Jamar", "id": "<@968386433389834241>"}},
+        {{"name": "J-Sizzle", "id": "<@968681678908293160>"}},
+        {{"name": "JP", "id": "<@968697658728415253>"}},
+        {{"name": "Cheeky Dave", "id": "<@949518034551332885>"}},
+        {{"name": "Troy", "id": "<@968700143195029534>"}},
+        {{"name": "CDogg", "id": "<@690043477374795826>"}}
     ]
     }}
 
