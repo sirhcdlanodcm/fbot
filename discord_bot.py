@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 from functions.build_assistant_instructions import build_instructions, USER_OBJECTIVES, USER_TONES
 from functions.get_openai_chat import get_openai_chat
 from functions.create_openai_assistant import add_thread_message
+from functions.db_functions import save_message, get_container
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers import SchedulerAlreadyRunningError
 import random
@@ -69,6 +70,11 @@ async def on_ready():
 async def on_message(message):
     print(f"Message from {message.author}: {message.content}")
     logger.info(f"Message from {message.author}: {message.content}")
+
+    ## save msg to cassandra db
+    server_name = message.guild.name if message.guild else "Direct Message"
+    print(save_message(user_id=str(message.author.id), server_id=server_name, message_content=message.content, container_id='msg_log', database_id='fbot'))
+
     if message.author == bot.user:
         return
 
