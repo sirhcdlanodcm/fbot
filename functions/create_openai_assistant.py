@@ -82,6 +82,8 @@ def build_instructions(tone, audience, objective, sentiment):
     Use at least 3 emojis in your response.
     Add at least 3 hashtags to your response.
 
+    SLOW DOWN and think about the user who messaged you before you respond. Correctly identify them from <Users> and the front of hte message.
+
     """
     return instructions
 

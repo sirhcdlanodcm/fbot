@@ -12,9 +12,12 @@ from dotenv import load_dotenv
 from functions.build_assistant_instructions import build_instructions, USER_OBJECTIVES, USER_TONES
 from functions.get_openai_chat import get_openai_chat
 from functions.create_openai_assistant import add_thread_message
-from functions.db_functions import save_message, get_container
+from functions.db_functions import save_message, get_container, save_graph_async
+from functions.llm_get_graph_command import get_graph_stament
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers import SchedulerAlreadyRunningError
+import nest_asyncio
+nest_asyncio.apply()
 import random
 import logging
 
@@ -23,6 +26,10 @@ logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
+
+## Gremlin endpoint and primary key
+endpoint = 'https://leagueknowledgegraph.documents.azure.com:443/'
+PRIMARY_KEY=os.getenv('PRIMARY_KEY')
 
 scheduler = AsyncIOScheduler()
 
@@ -57,7 +64,6 @@ def get_user_configuration(author):
                               current_user_id=author.mention)
 
 @bot.event
-# @client.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     logger.info(f'{bot.user.name} has connected to Discord!')
@@ -72,17 +78,31 @@ async def on_message(message):
     logger.info(f"Message from {message.author}: {message.content}")
 
     ## save msg to cassandra db
-    server_name = message.guild.name if message.guild else "Direct Message"
-    print(save_message(user_id=str(message.author.id), server_id=server_name, message_content=message.content, container_id='msg_log', database_id='fbot'))
+    # server_name = message.guild.name if message.guild else "Direct Message"
+    # print(save_message(user_id=str(message.author.id), server_id=server_name, message_content=message.content, container_id='msg_log', database_id='fbot'))
 
-    if message.author == bot.user:
+    ## No action triggered from bot messages
+    if message.author == bot.user: 
         return
 
-    if "Fuckbot" in message.content or "Friendbot" in message.content:
+    ## Trigger the bot with Fuckbot or Friendbot (case-sensitive)
+    elif "Fuckbot" in message.content or "Friendbot" in message.content:
         response = await process_message(message)  # Ensure response is awaited
         await message.reply(response)
 
-    #Allows the bot to process commands
+    ## if not triggering the bot, build the knowledge graph
+    else:
+        graph_msg = f"Message from {message.author}: {message.content}"
+        graph_query = get_graph_stament(graph_msg)
+        graph_query = graph_query.replace("#", "") # Invalid character in Gremlin, apparently.
+
+        print("Graph Query Statement:")
+        print(graph_query)
+        if graph_query != 'No Knowledge Found':
+            # Call save_graph asynchronously with your Gremlin connection details
+            await save_graph_async(graph_query, endpoint, "/dbs/graphdb/colls/persons", PRIMARY_KEY)
+
+    ##Allows the bot to process commands
     await bot.process_commands(message)
 
 async def scheduled_message():
@@ -119,7 +139,7 @@ async def process_message(message):
         response = add_thread_message(chatinput=clean_content, my_instructions=instructions)
     else:
         response = get_openai_chat(clean_content, str(message.author))
-        response = response.content  # Adjust based on actual return value structure
+        response = response.content  
     return response
 
 

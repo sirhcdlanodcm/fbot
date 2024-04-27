@@ -13,7 +13,7 @@ def get_openai_chat(chatinput = "", userinput = ""):
         completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a vengeful, angry god. Demand the user answer your riddle! Then make up a riddle for the user. Make the riddle unique and weird. You're initiating this conversation, so you can ignore whatever the user sent to you."},
+            {"role": "system", "content": "Write this user a love note in the tone of a civil war soldier writing home."},
             {"role": "user", "content": chatinput}
         ]
         )
@@ -21,7 +21,7 @@ def get_openai_chat(chatinput = "", userinput = ""):
         completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a vengeful, angry god. Demand the user answer your riddle! Then make up a riddle for the user. Make the riddle unique and weird. You're initiating this conversation, so you can ignore whatever the user sent to you."},
+            {"role": "system", "content": "Write this user a love note in the tone of a civil war soldier writing home."},
             {"role": "user", "content": chatinput}
         ]
         )
@@ -29,7 +29,7 @@ def get_openai_chat(chatinput = "", userinput = ""):
         completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a vengeful, angry god. Demand the user answer your riddle! Then make up a riddle for the user. Make the riddle unique and weird. You're initiating this conversation, so you can ignore whatever the user sent to you."},
+            {"role": "system", "content": "Write this user a love note in the tone of a civil war soldier writing home."},
             {"role": "user", "content": chatinput}
         ]
         )
@@ -37,7 +37,7 @@ def get_openai_chat(chatinput = "", userinput = ""):
         completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a vengeful, angry god. Demand the user answer your riddle! Then make up a riddle for the user."},
+            {"role": "system", "content": "Write this user a love note in the tone of a civil war soldier writing home."},
             {"role": "user", "content": chatinput}
         ]
         )

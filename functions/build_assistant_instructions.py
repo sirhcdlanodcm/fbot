@@ -66,5 +66,7 @@ def build_instructions(tone, audience, objective, sentiment, current_user_id):
     Use at least 3 emojis in your response.
     Add at least 3 hashtags to your response.
     Keep your answers brief, like you're having a conversation in a Discord channel.
+
+    SLOW DOWN and think about who is messaging you before you respond. Note their id in the front of the message and look up their name in madden_league_users
     """
     return instructions
