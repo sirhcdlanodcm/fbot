@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 from functions.build_assistant_instructions import build_instructions, USER_OBJECTIVES, USER_TONES
 from functions.get_openai_chat import get_openai_chat
 from functions.create_openai_assistant import add_thread_message
-from functions.db_functions import save_message, get_container, save_graph_async
+# from functions.db_functions import save_message, get_container, save_graph_async
 from functions.llm_get_graph_command import get_graph_stament
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers import SchedulerAlreadyRunningError
