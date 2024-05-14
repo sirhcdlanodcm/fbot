@@ -1,35 +1,24 @@
-from gremlin_python.driver import client, serializer
-from dotenv import load_dotenv
-import os
+# from aiogremlin import DriverRemoteConnection, Graph
+# from gremlin_python.process.anonymous_traversal import traversal
+# import os
+# import asyncio
 
-# Your Gremlin endpoint and primary key
-endpoint = 'https://leagueknowledgegraph.documents.azure.com:443/'
+# PRIMARY_KEY = os.getenv('PRIMARY_KEY')
+# ACCOUNT_NAME = 'leagueknowledgegraph'  # Replace with your Cosmos DB account name
 
-# Load environment variables
-dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
-print(dotenv_path)
-load_dotenv(dotenv_path)
-PRIMARY_KEY=os.getenv('PRIMARY_KEY')
-print(PRIMARY_KEY)
+# async def main():
+#     endpoint = f'wss://{ACCOUNT_NAME}.gremlin.cosmos.azure.com:443/gremlin'
+#     username = "/dbs/graphdb/colls/Persons"  # Replace with your actual db and collection names
+#     password = PRIMARY_KEY
 
+#     async with DriverRemoteConnection(endpoint, 'g', username=username, password=password) as conn:
+#         g = traversal().withRemote(conn)
+#         query = g.addV('person').property('id', '20').property('partitionId', 'testPartition').property('name', 'test aiogremlin')
+#         result = await query.toList()
 
-# Create a Gremlin client
-gremlin_client = client.Client(endpoint, 'g',
-                                username="/dbs/graphdb/colls/persons",
-                                password=PRIMARY_KEY,
-                                message_serializer=serializer.GraphSONSerializersV2d0())
+#         if result:
+#             print("Vertex Added", result)
+#         else:
+#             print("Something went wrong")
 
-# Gremlin query to add a vertex
-query = "g.addV('person').property('id', '2').property('partitionId', 'myPartitionValue').property('name', 'Jane Doe')"
-
-
-# Execute the query
-callback = gremlin_client.submitAsync(query)
-
-if callback.result() is not None:
-    print("Vertex Added")
-else:
-    print("Something went wrong")
-
-# Always a good practice to close the client connection
-gremlin_client.close()
+# asyncio.run(main())

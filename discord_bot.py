@@ -91,16 +91,16 @@ async def on_message(message):
         await message.reply(response)
 
     ## if not triggering the bot, build the knowledge graph
-    else:
-        graph_msg = f"Message from {message.author}: {message.content}"
-        graph_query = get_graph_stament(graph_msg)
-        graph_query = graph_query.replace("#", "") # Invalid character in Gremlin, apparently.
+    # else:
+    #     graph_msg = f"Message from {message.author}: {message.content}"
+    #     graph_query = get_graph_stament(graph_msg)
+    #     graph_query = graph_query.replace("#", "") # Invalid character in Gremlin, apparently.
 
-        print("Graph Query Statement:")
-        print(graph_query)
-        if graph_query != 'No Knowledge Found':
-            # Call save_graph asynchronously with your Gremlin connection details
-            await save_graph_async(graph_query, endpoint, "/dbs/graphdb/colls/persons", PRIMARY_KEY)
+    #     print("Graph Query Statement:")
+    #     print(graph_query)
+    #     if graph_query != 'No Knowledge Found':
+    #         # Call save_graph asynchronously with your Gremlin connection details
+    #         await save_graph_async(graph_query, endpoint, "/dbs/graphdb/colls/persons", PRIMARY_KEY)
 
     ##Allows the bot to process commands
     await bot.process_commands(message)
