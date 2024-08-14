@@ -12,14 +12,16 @@ from dotenv import load_dotenv
 from functions.build_assistant_instructions import build_instructions, USER_OBJECTIVES, USER_TONES
 from functions.get_openai_chat import get_openai_chat
 from functions.create_openai_assistant import add_thread_message
-# from functions.db_functions import save_message, get_container, save_graph_async
-from functions.llm_get_graph_command import get_graph_stament
+from functions.neo4j_functions import save_graph_async
+from functions.llm_get_graph_command import get_graph_statement
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers import SchedulerAlreadyRunningError
 import nest_asyncio
-nest_asyncio.apply()
-import random
 import logging
+from neo4j import GraphDatabase
+
+nest_asyncio.apply()
+
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -31,6 +33,14 @@ load_dotenv()
 endpoint = 'https://leagueknowledgegraph.documents.azure.com:443/'
 PRIMARY_KEY=os.getenv('PRIMARY_KEY')
 
+# Neo4j connection details
+NEO4J_URI = os.getenv('NEO4J_URI')
+NEO4J_USER = os.getenv('NEO4J_USER')
+NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD')
+
+# Initialize Neo4j driver
+driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+
 scheduler = AsyncIOScheduler()
 
 # Bot configuration
@@ -40,9 +50,6 @@ THREAD_ENABLED = True
 # Initialize Discord client with intents
 intents = discord.Intents.default()
 intents.messages = True
-# client = discord.Client(intents=intents)
-
-# So we can trigger commands from the bot (just for testing for now)
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 def get_user_configuration(author):
@@ -67,11 +74,12 @@ def get_user_configuration(author):
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     logger.info(f'{bot.user.name} has connected to Discord!')
-    try:
-        scheduler.add_job(scheduled_message, 'interval', hours=19)
-        scheduler.start()
-    except SchedulerAlreadyRunningError:
-        pass  # Scheduler is already running, no action needed
+    # try:
+    #     scheduler.add_job(scheduled_message, 'interval', hours=19)
+    #     scheduler.start()
+    # except SchedulerAlreadyRunningError:
+    #     pass  # Scheduler is already running, no action needed
+
 @bot.event
 async def on_message(message):
     print(f"Message from {message.author}: {message.content}")
@@ -91,38 +99,35 @@ async def on_message(message):
         await message.reply(response)
 
     ## if not triggering the bot, build the knowledge graph
-    # else:
-    #     graph_msg = f"Message from {message.author}: {message.content}"
-    #     graph_query = get_graph_stament(graph_msg)
-    #     graph_query = graph_query.replace("#", "") # Invalid character in Gremlin, apparently.
-
-    #     print("Graph Query Statement:")
-    #     print(graph_query)
-    #     if graph_query != 'No Knowledge Found':
-    #         # Call save_graph asynchronously with your Gremlin connection details
-    #         await save_graph_async(graph_query, endpoint, "/dbs/graphdb/colls/persons", PRIMARY_KEY)
+    else:
+        graph_msg = f"Message from {message.author}: {message.content}"
+        graph_query = get_graph_statement(graph_msg)
+        
+        if graph_query != 'No Knowledge Found':
+            # Call save_graph asynchronously with your Neo4j connection details
+            await save_graph_async(driver, graph_query)
 
     ##Allows the bot to process commands
     await bot.process_commands(message)
 
-async def scheduled_message():
-    """
-    """
-    # List of user IDs to send PMs to
-    user_ids = [690043477374795826, 968681678908293160, 968386433389834241, 968697658728415253, 949518034551332885, 968700143195029534]
-    user_id = random.choice(user_ids)  # Pick a random user ID from the list.
-    user = await bot.fetch_user(user_id)
+# async def scheduled_message():
+#     """
+#     """
+#     # List of user IDs to send PMs to
+#     user_ids = [690043477374795826, 968681678908293160, 968386433389834241, 968697658728415253, 949518034551332885, 968700143195029534]
+#     user_id = random.choice(user_ids)  # Pick a random user ID from the list.
+#     user = await bot.fetch_user(user_id)
 
-    # Fetch assistant's message for a user based on custom instructions
-    print('Sending PM to ' + str(user))
-    logger.info('Sending PM to ' + str(user))
+#     # Fetch assistant's message for a user based on custom instructions
+#     print('Sending PM to ' + str(user))
+#     logger.info('Sending PM to ' + str(user))
 
-    message = get_openai_chat(" ", str(user)).content
-    print(str(message))
-    logger.info('PM: ' + str(message))
+#     message = get_openai_chat(" ", str(user)).content
+#     print(str(message))
+#     logger.info('PM: ' + str(message))
 
-    # Send the generated message to the selected user
-    await user.send(message)
+#     # Send the generated message to the selected user
+#     await user.send(message)
 
 async def process_message(message):
     """

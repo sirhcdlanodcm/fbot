@@ -18,7 +18,7 @@ file = client.files.create(
 
 ## Trying the CO-STAR method. See medium article.
 my_assistant = client.beta.assistants.create(
-    model = "gpt-4",
+    model = "gpt-4o",
     instructions = "",
     name="FBot",
     tools=[],
