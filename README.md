@@ -1,32 +1,28 @@
 # FriendBot
 
-FriendBot is a Discord bot designed to interact with users in a channel, responding to specific triggers and building a knowledge graph based on the conversations. This project demonstrates the integration of several technologies, including OpenAI's GPT-4, Neo4j, and Azure, making it a powerful tool for capturing and analyzing social interactions in a Discord environment.
+FriendBot (Fbot) is a Discord bot designed to interact with users in a channel, responding to specific triggers with personalized responses. The bot uses OpenAI's GPT-4 to generate context-aware, user-specific responses based on custom configurations for each user.
 
 ## Features
 
-- **Responsive Interaction**: FriendBot responds to specific keywords in user messages, engaging with users directly in the Discord channel. Responses are customized per-user through prompt engineering.
-- **Knowledge Graph Construction**: The bot utilizes OpenAI's GPT-4 to extract knowledge graph nodes and relationships from Discord messages, which are then stored in a Neo4j database.
-- **Asynchronous Operations**: Leveraging the `AsyncIOScheduler`, FriendBot handles scheduled tasks and real-time message processing efficiently.
-- **Data Persistence**: Messages are logged asynchronously to a Cassandra database for long-term storage and analysis.
-- **Containerized Deployment**: The bot is containerized using Docker and deployed on Azure App Services for scalability and ease of management.
+- **Responsive Interaction**: FriendBot responds to specific keywords ("Fuckbot" or "Friendbot") in user messages, engaging with users directly in the Discord channel.
+- **Personalized Responses**: Responses are customized per-user through prompt engineering, with unique tones, objectives, and writing styles for each user.
+- **OpenAI Integration**: Uses OpenAI's Assistants API with GPT-4o for intelligent, context-aware responses.
+- **Containerized Deployment**: The bot is containerized using Docker for easy deployment.
 
 ## Tech Stack
 
 - **Python**: Core programming language used to build the bot.
-- **Discord.py**: Python library for interacting with the Discord API.
-- **OpenAI GPT-4**: Used to process and analyze messages for knowledge graph creation.
-- **Neo4j**: Graph database used to store the knowledge graph.
-- **Cassandra**: NoSQL database used for message logging.
+- **Discord.py**: Python library for interacting with the Discord API (v2.3+).
+- **OpenAI GPT-4o**: Used to generate personalized responses via the Assistants API.
 - **Docker**: Containerization technology used to package the application.
-- **Azure App Services**: Cloud platform used to deploy and manage the bot.
-- **APScheduler**: Python library for scheduling jobs asynchronously within the bot.
+- **APScheduler**: Python library for scheduling jobs asynchronously within the bot (optional).
 
 ## How It Works
 
-1. **Message Processing**: The bot listens to all messages in the channel. When a user mentions the bot or specific keywords, the bot processes the message using GPT-4 and determines the appropriate response.
-2. **Knowledge Graph Construction**: For non-trigger messages, the bot constructs a Cypher query to represent the knowledge captured in the conversation and stores it in Neo4j.
-3. **Asynchronous Logging**: All messages are asynchronously logged to a Cassandra database for future analysis.
-4. **Scheduled Tasks**: Using `APScheduler`, the bot can perform regular tasks such as sending reminders or periodic updates.
+1. **Message Processing**: The bot listens to all messages in the channel. When a user mentions "Fuckbot" or "Friendbot", the bot processes the message.
+2. **User Configuration**: The bot retrieves user-specific configurations (tone, objectives, writing style) from predefined settings.
+3. **Response Generation**: The bot uses OpenAI's Assistants API with custom instructions to generate a personalized response that matches the user's configuration.
+4. **Response Delivery**: The bot replies to the triggering message with the generated response.
 
 ## Getting Started
 
@@ -52,10 +48,6 @@ FriendBot is a Discord bot designed to interact with users in a channel, respond
    ```env
    DISCORD_TOKEN=your-discord-bot-token
    OPENAI_API_KEY=your-openai-api-key
-   NEO4J_URI=your-neo4j-uri
-   NEO4J_USER=your-neo4j-username
-   NEO4J_PASSWORD=your-neo4j-password
-   PRIMARY_KEY=your-cassandra-primary-key
    ```
 
 ### Running the Bot
@@ -63,5 +55,12 @@ FriendBot is a Discord bot designed to interact with users in a channel, respond
 To run the bot locally:
 
 ```bash
-python bot.py
+python discord_bot.py
+```
+
+Or using Docker:
+
+```bash
+docker build -t friendbot .
+docker run --env-file .env friendbot
 ```
