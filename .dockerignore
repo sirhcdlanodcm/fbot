@@ -1,6 +1,6 @@
-.env
-.env.local
-.env.*.local
+# Git
+.git
+.gitignore
 
 # Python
 __pycache__/
@@ -12,6 +12,9 @@ myEnv/
 venv/
 env/
 ENV/
+*.egg-info/
+dist/
+build/
 
 # IDE
 .vscode/
@@ -24,7 +27,21 @@ ENV/
 .DS_Store
 Thumbs.db
 
+# Environment
+.env
+.env.local
+.env.*.local
+
 # Project specific
 /scratch
 *.log
-temp.py
+data/
+notes/
+scripts/
+tests/
+bot_cleanup/
+
+# Documentation
+*.md
+!README.md
+

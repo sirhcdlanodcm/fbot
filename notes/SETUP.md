@@ -2,45 +2,22 @@
 
 ## Environment Variables
 
-The bot requires environment variables to be set. You have two options:
+The bot requires environment variables to be set. Create a `.env` file in the project root:
 
-### Option 1: Create a `.env` file (Recommended)
-
-1. Copy the example file:
-   ```bash
-   cp .env.example .env
-   ```
-   Or on Windows PowerShell:
-   ```powershell
-   Copy-Item .env.example .env
-   ```
-
-2. Edit `.env` and add your actual tokens:
-   ```env
-   DISCORD_TOKEN=your-actual-discord-bot-token
-   OPENAI_API_KEY=your-actual-openai-api-key
-   ```
-
-### Option 2: Set System Environment Variables
-
-You can set environment variables in your system instead:
-
-**Windows PowerShell:**
-```powershell
-$env:DISCORD_TOKEN="your-actual-discord-bot-token"
-$env:OPENAI_API_KEY="your-actual-openai-api-key"
+```env
+DISCORD_TOKEN=your-discord-bot-token
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=your-gemini-api-key
+GEMINI_MODEL=gemini-2.5-flash
+OPENAI_MAX_TOKENS=2000
+CONVERSATION_HISTORY_SIZE=10
 ```
 
-**Windows Command Prompt:**
-```cmd
-set DISCORD_TOKEN=your-actual-discord-bot-token
-set OPENAI_API_KEY=your-actual-openai-api-key
-```
-
-**Linux/Mac:**
-```bash
-export DISCORD_TOKEN="your-actual-discord-bot-token"
-export OPENAI_API_KEY="your-actual-openai-api-key"
+**Optional (if using OpenAI instead):**
+```env
+LLM_PROVIDER=openai
+OPENAI_API_KEY=your-openai-api-key
+OPENAI_MODEL=gpt-4o
 ```
 
 ## Getting Your Tokens
@@ -51,7 +28,12 @@ export OPENAI_API_KEY="your-actual-openai-api-key"
 3. Go to the "Bot" section
 4. Click "Reset Token" or "Copy" to get your bot token
 
-### OpenAI API Key
+### Gemini API Key
+1. Go to https://aistudio.google.com/app/apikey
+2. Create a new API key
+3. Copy the key
+
+### OpenAI API Key (Optional)
 1. Go to https://platform.openai.com/api-keys
 2. Create a new API key
 3. Copy the key (you won't be able to see it again!)
@@ -64,10 +46,16 @@ Once your environment variables are set:
 python discord_bot.py
 ```
 
+Or with Docker:
+
+```bash
+docker build -t friendbot .
+docker run --env-file .env friendbot
+```
+
 ## Troubleshooting
 
 If you get an error about missing environment variables:
 - Make sure your `.env` file is in the project root directory
 - Check that the variable names match exactly (case-sensitive)
 - Restart your terminal/IDE after creating/modifying `.env`
-
