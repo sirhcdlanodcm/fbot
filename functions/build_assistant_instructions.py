@@ -6,7 +6,7 @@ User configurations have been moved to config/users.py
 """
 
 from config.users import USER_OBJECTIVES, USER_TONES
-from constants import LEAGUE_MEMBERS, LEAGUE_CHAMPION_ID
+from constants import LEAGUE_MEMBERS, LEAGUE_CHAMPION_ID, DEFAULT_TONE, DEFAULT_OBJECTIVE
 
 # Re-export for backward compatibility
 __all__ = ['build_instructions', 'USER_OBJECTIVES', 'USER_TONES']
@@ -32,6 +32,20 @@ def build_instructions(tone: str, audience: str, objective: str, sentiment: str,
         for member in LEAGUE_MEMBERS
     )
     
+    objective_block = ""
+    if objective and objective.strip() and objective.strip() != DEFAULT_OBJECTIVE:
+        objective_block = f"""
+    # OBJECTIVE #
+    {objective}
+"""
+
+    tone_block = ""
+    if tone and tone.strip() and tone.strip() != DEFAULT_TONE:
+        tone_block = f"""
+    # TONE #
+    {tone}
+"""
+
     instructions = f"""
     # CONTEXT #
     Your name is Fbot, short for Friendbot. You're an assistant to the Madden League.
@@ -49,12 +63,7 @@ def build_instructions(tone: str, audience: str, objective: str, sentiment: str,
         {league_members_json}
     ]
     }}
-
-    # OBJECTIVE #
-    {objective}
-    
-    # TONE #
-    {tone}
+{objective_block}{tone_block}
 
     # SENTIMENT SCALE #
     {sentiment}
