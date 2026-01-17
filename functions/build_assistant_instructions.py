@@ -7,6 +7,7 @@ User configurations have been moved to config/users.py
 
 from config.users import USER_OBJECTIVES, USER_TONES
 from constants import LEAGUE_MEMBERS, DEFAULT_TONE, DEFAULT_OBJECTIVE, get_champion_mention
+from config.league_status import LEAGUE_CHAMPION_ID, get_champion_name, get_team_for_user
 
 # Re-export for backward compatibility
 __all__ = ['build_instructions', 'USER_OBJECTIVES', 'USER_TONES']
@@ -28,7 +29,7 @@ def build_instructions(tone: str, audience: str, objective: str, sentiment: str,
     
     # Format league members as JSON
     league_members_json = ",\n        ".join(
-        f'{{"name": "{member["name"]}", "id": "{member["id"]}"}}'
+        f'{{"key": "{member.get("key", "")}", "name": "{member["name"]}", "id": "{member["id"]}", "team": "{get_team_for_user(member.get("key", "")) or ""}"}}'
         for member in LEAGUE_MEMBERS
     )
     
@@ -58,6 +59,11 @@ def build_instructions(tone: str, audience: str, objective: str, sentiment: str,
     "current_user": {{
         "id": "{user_id_clean}",
         "role": "message_sender"
+    }},
+    "current_champion": {{
+        "key": "{LEAGUE_CHAMPION_ID}",
+        "name": "{get_champion_name()}",
+        "id": "{get_champion_mention()}"
     }},
     "madden_league_users": [
         {league_members_json}
