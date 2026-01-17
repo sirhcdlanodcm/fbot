@@ -5,9 +5,9 @@ from typing import Dict, Optional
 # League member information
 LEAGUE_MEMBERS = [
     {"key": "jmdfive#0", "name": "Jamar", "id": "<@968386433389834241>"},
-    {"key": "rustymatador#0", "name": "J-Sizzle", "id": "<@968681678908293160>"},
+    {"key": "rustymatador#0", "name": "Cheeky Dave", "id": "<@949518034551332885>"},
     {"key": "josh2madd3n#0", "name": "JP", "id": "<@968697658728415253>"},
-    {"key": "seadeadreckoning#0", "name": "Cheeky Dave", "id": "<@949518034551332885>"},
+    {"key": "seadeadreckoning#0", "name": "J-Sizzle", "id": "<@968681678908293160>"},
     {"key": "dicktanning#0", "name": "Troy", "id": "<@968700143195029534>"},
     {"key": "cdoggfreshy2k2000#0", "name": "CDogg", "id": "<@690043477374795826>"},
 ]
