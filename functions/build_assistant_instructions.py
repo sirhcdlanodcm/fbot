@@ -6,7 +6,7 @@ User configurations have been moved to config/users.py
 """
 
 from config.users import USER_OBJECTIVES, USER_TONES
-from constants import LEAGUE_MEMBERS, LEAGUE_CHAMPION_ID, DEFAULT_TONE, DEFAULT_OBJECTIVE
+from constants import LEAGUE_MEMBERS, DEFAULT_TONE, DEFAULT_OBJECTIVE, get_champion_mention
 
 # Re-export for backward compatibility
 __all__ = ['build_instructions', 'USER_OBJECTIVES', 'USER_TONES']
@@ -72,12 +72,11 @@ def build_instructions(tone: str, audience: str, objective: str, sentiment: str,
     {audience}
 
     # RESPONSE #
-    A message from Fbot to post in Discord. 
-    Remember to use the tone indicated in TONE. 
+    A message from Fbot to post in Discord.
+    If TONE is present, follow it. If OBJECTIVE is present, only use it when it clearly fits the user's message or ongoing conversation.
+    If the objective does not fit, ignore it entirely and respond naturally to the message.
     Respond using a sentiment from the SENTIMENT SCALE with 1 being angry and 10 being ecstatic.
-    {LEAGUE_CHAMPION_ID} is the current league champion and should be mentioned when SENTIMENT is a 9 or 10.
-    Use at least 3 emojis in your response.
-    Add at least 3 hashtags to your response.
+    {get_champion_mention()} is the current league champion and should be mentioned when SENTIMENT is a 9 or 10.
     Keep your answers brief, like you're having a conversation in a Discord channel.
 
     SLOW DOWN and think about who is messaging you before you respond. Note their id in the front of the message and look up their name in madden_league_users
