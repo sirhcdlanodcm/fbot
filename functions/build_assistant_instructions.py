@@ -14,7 +14,15 @@ __all__ = ['build_instructions', 'USER_OBJECTIVES', 'USER_TONES']
 
 
 
-def build_instructions(tone: str, audience: str, objective: str, sentiment: str, current_user_id: str) -> str:
+def build_instructions(
+    tone: str,
+    audience: str,
+    objective: str,
+    sentiment: str,
+    current_user_id: str,
+    *,
+    standing_in_for_cdogg: bool = False,
+) -> str:
     """
     Build instructions for the OpenAI assistant based on user configuration.
     
@@ -23,6 +31,7 @@ def build_instructions(tone: str, audience: str, objective: str, sentiment: str,
     :param objective: The objective for the response
     :param sentiment: Sentiment scale (1-10)
     :param current_user_id: The Discord user ID mention
+    :param standing_in_for_cdogg: If True, instruct the model to cover for CDogg when he was @mentioned
     :return: Formatted instructions string
     """
     user_id_clean = str(current_user_id).replace("!","")
@@ -40,11 +49,27 @@ def build_instructions(tone: str, audience: str, objective: str, sentiment: str,
     {objective}
 """
 
+    objective_response_hint = ""
+    if objective_block:
+        objective_response_hint = """
+    When OBJECTIVE is present, it is optional flavor for this reply only.
+    Answer the user's question or comment directly first. If a brief nod to OBJECTIVE fits naturally, use at most one short line or aside; otherwise skip it.
+    For serious, factual, or practical questions, be helpful and ignore OBJECTIVE.
+"""
+
     tone_block = ""
     if tone and tone.strip() and tone.strip() != DEFAULT_TONE:
         tone_block = f"""
     # TONE #
     {tone}
+"""
+
+    standing_in_block = ""
+    if standing_in_for_cdogg:
+        standing_in_block = """
+    # STANDING IN #
+    The user's message @mentioned CDogg (league member). He stepped away briefly—for example, stepped out for a smoke—and isn't at the keyboard.
+    Start with one short, casual line in that spirit (e.g. CDogg stepped out for a bit, but he'll probably be back soon). Then answer the rest of their question or comment naturally. Keep it brief like Discord chat.
 """
 
     instructions = f"""
@@ -69,7 +94,7 @@ def build_instructions(tone: str, audience: str, objective: str, sentiment: str,
         {league_members_json}
     ]
     }}
-{objective_block}{tone_block}
+{objective_block}{tone_block}{standing_in_block}
 
     # SENTIMENT SCALE #
     {sentiment}
@@ -79,8 +104,8 @@ def build_instructions(tone: str, audience: str, objective: str, sentiment: str,
 
     # RESPONSE #
     A message from Fbot to post in Discord.
-    If TONE is present, follow it. If OBJECTIVE is present, only use it when it clearly fits the user's message or ongoing conversation.
-    If the objective does not fit, ignore it entirely and respond naturally to the message.
+    If TONE is present, follow it.{objective_response_hint}
+    If OBJECTIVE is absent, respond naturally. If OBJECTIVE is present, treat it as a light optional angle—not something you must force into every sentence.
     Respond using a sentiment from the SENTIMENT SCALE with 1 being angry and 10 being ecstatic.
     {get_champion_mention()} is the current league champion and should be mentioned when SENTIMENT is a 9 or 10.
     Keep your answers brief, like you're having a conversation in a Discord channel.

@@ -10,11 +10,14 @@ from discord.ext import commands
 import logging
 
 from config import load_config
+from config.league_status import get_cdogg_user_id
+from bot.trigger_logic import compute_llm_trigger_state
 from bot.services.user_service import UserService
 from bot.services.llm_service import LLMService
 from bot.services.conversation_history import ConversationHistory
 from functions.build_assistant_instructions import build_instructions
-from constants import BOT_TRIGGERS, ERROR_TIMEOUT, ERROR_GENERIC, ERROR_REPLY
+from constants import BOT_TRIGGERS, ERROR_TIMEOUT, ERROR_GENERIC, ERROR_REPLY, DEFAULT_OBJECTIVE
+from bot.objective_injection import omit_custom_objective
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -76,13 +79,25 @@ async def on_message(message):
     for i, msg in enumerate(current_history, 1):
         logger.info(f"  {i}. {msg.author}: {msg.content[:100]}{'...' if len(msg.content) > 100 else ''}")
 
-    ## Trigger the bot with Fuckbot or Friendbot (case-sensitive)
-    triggers_found = [trigger for trigger in BOT_TRIGGERS if trigger in message.content]
-    if triggers_found:
-        logger.info(f"Bot trigger detected: {triggers_found} in message from {message.author}")
+    ## Trigger the bot with Fuckbot or Friendbot (case-sensitive), or @mention of CDogg
+    trigger_state = compute_llm_trigger_state(
+        message.content,
+        (user.id for user in message.mentions),
+        keyword_triggers=BOT_TRIGGERS,
+        cdogg_user_id=get_cdogg_user_id(),
+    )
+    should_respond = trigger_state.should_respond
+    triggers_found = list(trigger_state.triggers_found)
+    cdogg_mentioned = trigger_state.cdogg_mentioned
+
+    if should_respond:
+        if triggers_found:
+            logger.info(f"Bot trigger detected: {triggers_found} in message from {message.author}")
+        if cdogg_mentioned:
+            logger.info(f"CDogg mention detected in message from {message.author}")
         try:
             logger.info(f"Processing message for {message.author}")
-            response = await process_message(message)
+            response = await process_message(message, standing_in_for_cdogg=cdogg_mentioned)
             logger.info(f"Generated response (length: {len(response)}): {response[:100]}...")
             await message.reply(response)
             logger.info(f"Successfully replied to message from {message.author}")
@@ -99,7 +114,7 @@ async def on_message(message):
             logger.error(f"Error replying to message from {message.author}: {e}", exc_info=True)
             await message.reply(ERROR_REPLY)
     else:
-        logger.debug(f"No bot triggers found in message. Triggers: {BOT_TRIGGERS}")
+        logger.debug(f"No bot triggers or CDogg mention. Triggers: {BOT_TRIGGERS}")
 
     ## Allows the bot to process commands
     await bot.process_commands(message)
@@ -123,11 +138,12 @@ async def on_message(message):
 #     # Send the generated message to the selected user
 #     await user.send(message)
 
-async def process_message(message: discord.Message) -> str:
+async def process_message(message: discord.Message, *, standing_in_for_cdogg: bool = False) -> str:
     """
     Processes a message and returns an appropriate response based on the user configuration.
 
     :param message: The message to process.
+    :param standing_in_for_cdogg: When True, system prompt includes cover-for-CDogg instructions.
     :return: A string containing the bot's response.
     """
     logger.info(f"process_message called for user: {message.author} (ID: {message.author.id})")
@@ -139,7 +155,20 @@ async def process_message(message: discord.Message) -> str:
         logger.debug(f"Fetching user configuration for {message.author}")
         user_config = UserService.get_user_config_for_author(message.author)
         logger.info(f"User config - Tone: {user_config.tone}, Objective: {user_config.objective}")
-        
+
+        objective_for_prompt = user_config.objective
+        if omit_custom_objective(
+            user_config.objective,
+            DEFAULT_OBJECTIVE,
+            config.objective_injection_probability,
+            random.random(),
+        ):
+            logger.debug(
+                "Omitting USER_OBJECTIVE this request (intermittent injection; "
+                f"p_include={config.objective_injection_probability})"
+            )
+            objective_for_prompt = DEFAULT_OBJECTIVE
+
         audience = f"Tag the user {message.author.mention}"
         sentiment = str(random.randint(1, 10))
         logger.debug(f"Audience: {audience}, Sentiment: {sentiment}")
@@ -149,9 +178,10 @@ async def process_message(message: discord.Message) -> str:
         system_prompt = build_instructions(
             tone=user_config.tone,
             audience=audience,
-            objective=user_config.objective,
+            objective=objective_for_prompt,
             sentiment=sentiment,
-            current_user_id=message.author.mention
+            current_user_id=message.author.mention,
+            standing_in_for_cdogg=standing_in_for_cdogg,
         )
         logger.info(f"System prompt built (length: {len(system_prompt)} chars)")
 

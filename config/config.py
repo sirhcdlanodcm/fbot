@@ -26,7 +26,9 @@ class BotConfig:
     
     # Bot behavior
     testing_mode: bool = False
-    
+    # P(include per-user USER_OBJECTIVE block each request); 1.0 = always (legacy behavior)
+    objective_injection_probability: float = 0.4
+
     # Model settings
     openai_model: str = "gpt-4o"
     openai_fallback_model: str = "gpt-4o-mini"
@@ -57,7 +59,13 @@ class BotConfig:
             raise ValueError("OPENAI_API_KEY environment variable is not set (required for OpenAI provider)")
         if llm_provider == 'gemini' and not gemini_key:
             raise ValueError("GEMINI_API_KEY environment variable is not set (required for Gemini provider)")
-        
+
+        raw_obj_p = os.getenv("OBJECTIVE_INJECTION_PROBABILITY", "0.25")
+        try:
+            objective_injection_probability = max(0.0, min(1.0, float(raw_obj_p)))
+        except ValueError:
+            objective_injection_probability = 0.4
+
         return cls(
             discord_token=discord_token,
             llm_provider=llm_provider,
@@ -69,6 +77,7 @@ class BotConfig:
             openai_fallback_model=os.getenv('OPENAI_FALLBACK_MODEL', 'gpt-4o-mini'),
             openai_max_tokens=int(os.getenv('OPENAI_MAX_TOKENS', '2000')),
             conversation_history_size=int(os.getenv('CONVERSATION_HISTORY_SIZE', '5')),
+            objective_injection_probability=objective_injection_probability,
         )
 
 

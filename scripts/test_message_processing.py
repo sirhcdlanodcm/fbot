@@ -15,7 +15,12 @@ from functions.build_assistant_instructions import build_instructions
 from config import load_config
 import random
 
-def create_mock_discord_message(content: str, author_name: str = "TestUser", author_id: int = 123456789):
+def create_mock_discord_message(
+    content: str,
+    author_name: str = "TestUser",
+    author_id: int = 123456789,
+    mentions=None,
+):
     """Create a mock Discord message object."""
     message = Mock()
     message.content = content
@@ -26,6 +31,7 @@ def create_mock_discord_message(content: str, author_name: str = "TestUser", aut
     message.author.mention = f"<@{author_id}>"
     message.channel = Mock()
     message.channel.id = 999999999  # Test channel ID
+    message.mentions = mentions if mentions is not None else []
     return message
 
 def test_message_processing():
@@ -141,11 +147,35 @@ def test_message_processing():
         audience=audience,
         objective=user_config.objective,
         sentiment=sentiment,
-        current_user_id=trigger_msg.author.mention
+        current_user_id=trigger_msg.author.mention,
     )
     print(f"[OK] System prompt built ({len(system_prompt)} chars)")
     print(f"  - Audience: {audience}")
     print(f"  - Sentiment: {sentiment}")
+
+    standing_prompt = build_instructions(
+        tone=user_config.tone,
+        audience=audience,
+        objective=user_config.objective,
+        sentiment=sentiment,
+        current_user_id=trigger_msg.author.mention,
+        standing_in_for_cdogg=True,
+    )
+    if "# STANDING IN #" not in standing_prompt:
+        print("[ERROR] standing_in_for_cdogg prompt missing # STANDING IN # block")
+        return False
+    print("[OK] standing_in_for_cdogg injects # STANDING IN # block")
+
+    cdogg_user = Mock()
+    cdogg_user.id = 690043477374795826
+    mention_msg = create_mock_discord_message(
+        "<@690043477374795826> what's good?",
+        "Jamar",
+        968386433389834241,
+        mentions=[cdogg_user],
+    )
+    assert mention_msg.mentions[0].id == 690043477374795826
+    print("[OK] Mock message supports mentions (CDogg @ simulation)")
     
     # Process message (clean content)
     clean_content = trigger_msg.content.replace("Fuckbot", "Friendbot")

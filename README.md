@@ -4,7 +4,7 @@ FriendBot (Fbot) is a Discord bot designed to interact with users in a channel, 
 
 ## Features
 
-- **Responsive Interaction**: FriendBot responds to specific keywords ("Fuckbot" or "Friendbot") in user messages, engaging with users directly in the Discord channel.
+- **Responsive Interaction**: FriendBot responds when someone writes "Fuckbot" or "Friendbot", or when they @mention CDogg (league member in `config/league_status.py`). For CDogg mentions, the bot briefly acknowledges he stepped away, then answers the message.
 - **Personalized Responses**: Responses are customized per-user through prompt engineering, with unique tones, objectives, and writing styles for each user.
 - **LLM Integration**: Uses Google Gemini (configurable to OpenAI) for intelligent, context-aware responses.
 - **Conversation History**: Maintains context across messages in each channel for more natural conversations.
@@ -20,7 +20,7 @@ FriendBot (Fbot) is a Discord bot designed to interact with users in a channel, 
 
 ## How It Works
 
-1. **Message Processing**: The bot listens to all messages in the channel. When a user mentions "Fuckbot" or "Friendbot", the bot processes the message.
+1. **Message Processing**: The bot listens to all messages in the channel. It responds when a user says "Fuckbot" or "Friendbot", or @mentions CDogg (same LLM path; CDogg mentions add brief "cover" instructions in the system prompt).
 2. **User Configuration**: The bot retrieves user-specific configurations (tone, objectives, writing style) from predefined settings in `config/users.py`.
 3. **Conversation History**: The bot maintains a rolling history of recent messages in each channel for context.
 4. **Response Generation**: The bot uses the configured LLM (Gemini by default) with custom instructions to generate a personalized response.
@@ -61,6 +61,7 @@ FriendBot (Fbot) is a Discord bot designed to interact with users in a channel, 
    GEMINI_MODEL=gemini-2.5-flash
    OPENAI_MAX_TOKENS=2000
    CONVERSATION_HISTORY_SIZE=10
+   OBJECTIVE_INJECTION_PROBABILITY=0.4
    ```
 
    **Optional (if using OpenAI instead):**
@@ -69,6 +70,17 @@ FriendBot (Fbot) is a Discord bot designed to interact with users in a channel, 
    OPENAI_API_KEY=your-openai-api-key
    OPENAI_MODEL=gpt-4o
    ```
+
+### Running tests (pytest)
+
+Unit tests live under `tests/`. From the repo root:
+
+```bash
+pip install -r requirements.txt
+pytest
+```
+
+Ad hoc scripts that hit real APIs remain under `scripts/` (for example `python scripts/test_message_processing.py`).
 
 ### Running the Bot
 
@@ -100,6 +112,10 @@ The bot supports multiple LLM providers:
 
 Switch providers by changing the `LLM_PROVIDER` environment variable.
 
+### Per-user objective frequency
+
+`OBJECTIVE_INJECTION_PROBABILITY` (default `0.4`) is the chance each request includes that user’s `USER_OBJECTIVES` line in the system prompt. Use `1.0` for the old “always include” behavior, or `0.0` to never inject persona objectives.
+
 ## Project Structure
 
 ```
@@ -112,6 +128,7 @@ fbot/
 ├── config/                 # Configuration
 │   ├── config.py          # Main bot configuration
 │   └── users.py           # User-specific settings
+├── tests/                  # Pytest unit tests
 ├── constants.py            # Bot constants and triggers
 ├── discord_bot.py         # Main bot file
 └── requirements.txt       # Python dependencies

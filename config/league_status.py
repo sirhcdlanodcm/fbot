@@ -2,6 +2,8 @@
 
 from typing import Dict, Optional
 
+CDOGG_USER_KEY = "cdoggfreshy2k2000#0"
+
 # League member information
 LEAGUE_MEMBERS = [
     {"key": "jmdfive#0", "name": "Jamar", "id": "<@968386433389834241>"},
@@ -24,6 +26,17 @@ LEAGUE_TEAMS: Dict[str, str] = {
     "dicktanning#0": "USC",
     "seadeadreckoning#0": "Michigan",
 }
+
+
+def get_cdogg_user_id() -> int:
+    """Discord numeric user id for CDogg, parsed from LEAGUE_MEMBERS."""
+    for member in LEAGUE_MEMBERS:
+        if member.get("key") == CDOGG_USER_KEY:
+            raw = str(member.get("id", "")).strip()
+            # Formats: <@id> or <@!id> (nickname mention)
+            inner = raw.strip("<@!>")
+            return int(inner)
+    raise ValueError(f"No league member with key {CDOGG_USER_KEY!r}")
 
 
 def get_champion_name() -> str:
