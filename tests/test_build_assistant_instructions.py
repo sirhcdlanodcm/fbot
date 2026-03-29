@@ -30,7 +30,7 @@ def test_includes_league_json_and_champion():
     text = _minimal_prompt()
     assert "madden_league_users" in text
     assert "CDogg" in text
-    assert "Cheeky Dave" in text
+    assert "Jamar" in text
 
 def test_objective_includes_light_touch_hint():
     text = build_instructions(

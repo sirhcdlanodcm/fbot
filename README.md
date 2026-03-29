@@ -121,6 +121,12 @@ Switch providers by changing the `LLM_PROVIDER` environment variable.
 
 `REACTION_PROBABILITY` (default `0.1`) is the chance the bot adds a random Unicode emoji reaction to each human message. Set to `0` to disable. The bot needs **Add Reactions** permission in the channel.
 
+### League champion (no image rebuild)
+
+`LEAGUE_CHAMPION` overrides who the bot treats as the current champion (prompts, mentions, etc.). If unset, the default in [`config/league_status.py`](config/league_status.py) is used.
+
+Accepted forms are documented in [`.env.example`](.env.example) (no roster examples in the public README). On startup the bot logs a short generic hint; invalid values log a warning and fall back to the file default. For private operator notes (who maps to what), use a gitignored file such as `league-settings.local` (see `.gitignore`).
+
 ## Project Structure
 
 ```

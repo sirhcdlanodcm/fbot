@@ -10,7 +10,7 @@ from discord.ext import commands
 import logging
 
 from config import load_config
-from config.league_status import get_cdogg_user_id
+from config.league_status import get_cdogg_user_id, log_league_champion_for_operators
 from bot.trigger_logic import compute_llm_trigger_state
 from bot.services.user_service import UserService
 from bot.services.llm_service import LLMService
@@ -69,6 +69,7 @@ bot = commands.Bot(command_prefix=config.command_prefix, intents=intents)
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     logger.info(f'{bot.user.name} has connected to Discord!')
+    log_league_champion_for_operators()
     # try:
     #     scheduler.add_job(scheduled_message, 'interval', hours=19)
     #     scheduler.start()

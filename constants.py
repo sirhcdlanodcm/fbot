@@ -1,6 +1,6 @@
 """Constants used throughout the bot."""
 
-from config.league_status import LEAGUE_MEMBERS, LEAGUE_CHAMPION_ID, get_champion_mention
+from config.league_status import LEAGUE_MEMBERS, LEAGUE_CHAMPION_ID, get_champion_key, get_champion_mention
 
 # Bot trigger words
 BOT_TRIGGERS = ["Fuckbot", "Friendbot"]

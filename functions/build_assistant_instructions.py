@@ -7,7 +7,7 @@ User configurations have been moved to config/users.py
 
 from config.users import USER_OBJECTIVES, USER_TONES
 from constants import LEAGUE_MEMBERS, DEFAULT_TONE, DEFAULT_OBJECTIVE, get_champion_mention
-from config.league_status import LEAGUE_CHAMPION_ID, get_champion_name, get_team_for_user
+from config.league_status import get_champion_key, get_champion_name, get_team_for_user
 
 # Re-export for backward compatibility
 __all__ = ['build_instructions', 'USER_OBJECTIVES', 'USER_TONES']
@@ -86,7 +86,7 @@ def build_instructions(
         "role": "message_sender"
     }},
     "current_champion": {{
-        "key": "{LEAGUE_CHAMPION_ID}",
+        "key": "{get_champion_key()}",
         "name": "{get_champion_name()}",
         "id": "{get_champion_mention()}"
     }},

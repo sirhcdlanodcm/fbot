@@ -24,6 +24,10 @@ ENV/
 .DS_Store
 Thumbs.db
 
+# Operator-only league reminders (optional; not committed)
+league-settings.local
+.env.league.local
+
 # Project specific
 /scratch
 *.log
