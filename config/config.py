@@ -28,6 +28,8 @@ class BotConfig:
     testing_mode: bool = False
     # P(include per-user USER_OBJECTIVE block each request); 1.0 = always (legacy behavior)
     objective_injection_probability: float = 0.4
+    # P(add a random Unicode reaction to a human message); 0 disables
+    reaction_probability: float = 0.1
 
     # Model settings
     openai_model: str = "gpt-4o"
@@ -66,6 +68,12 @@ class BotConfig:
         except ValueError:
             objective_injection_probability = 0.4
 
+        raw_rx_p = os.getenv("REACTION_PROBABILITY", "0.1")
+        try:
+            reaction_probability = max(0.0, min(1.0, float(raw_rx_p)))
+        except ValueError:
+            reaction_probability = 0.1
+
         return cls(
             discord_token=discord_token,
             llm_provider=llm_provider,
@@ -78,6 +86,7 @@ class BotConfig:
             openai_max_tokens=int(os.getenv('OPENAI_MAX_TOKENS', '2000')),
             conversation_history_size=int(os.getenv('CONVERSATION_HISTORY_SIZE', '5')),
             objective_injection_probability=objective_injection_probability,
+            reaction_probability=reaction_probability,
         )
 
 

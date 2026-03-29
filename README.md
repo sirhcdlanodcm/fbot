@@ -62,6 +62,7 @@ FriendBot (Fbot) is a Discord bot designed to interact with users in a channel, 
    OPENAI_MAX_TOKENS=2000
    CONVERSATION_HISTORY_SIZE=10
    OBJECTIVE_INJECTION_PROBABILITY=0.4
+   REACTION_PROBABILITY=0.1
    ```
 
    **Optional (if using OpenAI instead):**
@@ -115,6 +116,10 @@ Switch providers by changing the `LLM_PROVIDER` environment variable.
 ### Per-user objective frequency
 
 `OBJECTIVE_INJECTION_PROBABILITY` (default `0.4`) is the chance each request includes that user’s `USER_OBJECTIVES` line in the system prompt. Use `1.0` for the old “always include” behavior, or `0.0` to never inject persona objectives.
+
+### Random reactions
+
+`REACTION_PROBABILITY` (default `0.1`) is the chance the bot adds a random Unicode emoji reaction to each human message. Set to `0` to disable. The bot needs **Add Reactions** permission in the channel.
 
 ## Project Structure
 

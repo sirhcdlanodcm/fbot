@@ -18,9 +18,32 @@ from bot.services.conversation_history import ConversationHistory
 from functions.build_assistant_instructions import build_instructions
 from constants import BOT_TRIGGERS, ERROR_TIMEOUT, ERROR_GENERIC, ERROR_REPLY, DEFAULT_OBJECTIVE
 from bot.objective_injection import omit_custom_objective
+from bot.reaction_roll import should_add_random_reaction
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+# Unicode reactions only (no guild custom emoji resolution)
+_REACTION_EMOJIS = (
+    # faces / mood
+    "😀", "😃", "😄", "😁", "😆", "🤣", "😂", "🙂", "😉", "😎", "🤓", "🥳", "😤", "🤔", "🫡", "🫠", "🥶", "🤯", "😈", "👻",
+    # hands / gestures
+    "👍", "👎", "👏", "🙌", "🤝", "✌️", "🤞", "🫶", "💪", "🤙", "👊", "🤌",
+    # hearts / sparkles
+    "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "💯", "✨", "⭐", "🌟", "💫", "🔥", "💥", "⚡",
+    # sports / games / trophy
+    "🏈", "🏀", "⚽", "🎾", "🏆", "🥇", "🥈", "🥉", "🎯", "🎲", "🎮", "🕹️", "👑",
+    # skull / chaos
+    "💀", "☠️", "🎃", "👾", "🤖",
+    # food / drink
+    "🍕", "🌮", "🍔", "🌭", "🍺", "🥃", "☕", "🧃", "🍿", "🎂",
+    # animals
+    "🐐", "🦅", "🐸", "🦍", "🐴", "🦆", "🦈", "🐊", "🦖", "🐙",
+    # nature / weather
+    "🌈", "☀️", "🌙", "⛈️", "❄️", "🧊", "🌊", "🌴", "🍀",
+    # objects / misc
+    "🚨", "📣", "🎺", "🥁", "🔔", "⏰", "📈", "📉", "🧠", "👀", "🫵", "🤷", "🙃",
+)
 
 # Load configuration
 config = load_config()
@@ -115,6 +138,14 @@ async def on_message(message):
             await message.reply(ERROR_REPLY)
     else:
         logger.debug(f"No bot triggers or CDogg mention. Triggers: {BOT_TRIGGERS}")
+
+    if should_add_random_reaction(config.reaction_probability, random.random()):
+        try:
+            await message.add_reaction(random.choice(_REACTION_EMOJIS))
+        except discord.HTTPException as e:
+            logger.debug("Could not add reaction: %s", e)
+        except Exception as e:
+            logger.warning("Unexpected error adding reaction: %s", e)
 
     ## Allows the bot to process commands
     await bot.process_commands(message)
